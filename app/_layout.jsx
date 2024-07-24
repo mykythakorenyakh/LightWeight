@@ -28,7 +28,7 @@ const MainLayout = () => {
             color: '#fafafa'
           },
           drawerStyle: {
-            width: '50%'
+            width: '70%'
           },
           drawerLabelStyle:{
             fontWeight:700,

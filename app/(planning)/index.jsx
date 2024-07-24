@@ -1,10 +1,18 @@
 import { View, Text, TextInput, Pressable, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import WorkoutEditor from './editor'
+import {getWorkouts} from '../../services/database.jsx'
 
 const PlanHome = () => {
 
   const [showEditor,setShowEditor] = useState(false)
+
+
+  useEffect(()=>{
+    const results = getWorkouts();
+    console.log((results.getAllSync()[0].exercises))
+
+  },[])
 
   return (
     <>
