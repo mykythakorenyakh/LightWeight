@@ -1,18 +1,46 @@
-import { View, Text, Modal, Pressable, TextInput, ScrollView, Image, Animated } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Modal, Pressable, TextInput, ScrollView, Image, Animated, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import {addWorkout} from '../../services/database.jsx'
+import { Calendar } from 'react-native-calendars'
 
-const WorkoutEditor = ({ show, setShow }) => {
+import { addWorkout, updateWorkout } from '../../services/database.jsx';
+
+const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
   const [title, setTitle] = useState('')
   const [exercises, setExercises] = useState([])
   const [description, setDescription] = useState('')
 
+  const [showCalendar, setShowCalendar] = useState(false)
+  const [day, setDay] = useState(null)
+
   useEffect(() => {
+    if (workout) {
 
-  }, [])
+      setTitle(workout.title)
+      setExercises(JSON.parse(workout.exercises))
+      setDescription(workout.desc)
 
+      const d = new Date(workout.date);
+      setDay(`${d.getFullYear()}-${d.getMonth() + 1 <= 9 ? '0' + (d.getMonth() + 1) : d.month}-${d.getDate()}`)
+    }
+
+  }, [workout])
+
+  const checkChanges = () => {
+    if (workout) {
+      if (workout.title != title) return true;
+      
+      if (JSON.parse(workout.exercises).length != exercises.length) return true;
+
+      if (workout.desc !== description) return true;
+
+      const date = new Date(workout.date).toISOString();
+
+      if (date != new Date(day).toISOString()) return true;
+    }
+    return false;
+  }
 
   const changeExercise = ({ id, odd, repsType, title, cycle }) => {
 
@@ -84,7 +112,7 @@ const WorkoutEditor = ({ show, setShow }) => {
                         <View className="flex-row gap-[3px] pl-[3px]">
                           <View className="basis-[14%]">
                             <Pressable onPress={() => changeExercise({ id: item.id, odd: true })}><Text className="text-xs font-light" >Sets</Text></Pressable>
-                            <TextInput className="bg-slate-300"
+                            <TextInput keyboardType="numeric" className="bg-slate-300"
                               defaultValue={item.cycle[0].sets}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -108,7 +136,7 @@ const WorkoutEditor = ({ show, setShow }) => {
                             }}>
                               <Text className="text-xs font-light">Reps</Text>
                             </Pressable>
-                            <TextInput className="bg-slate-300"
+                            <TextInput keyboardType="numeric" className="bg-slate-300"
                               defaultValue={item.cycle[0].reps}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -126,7 +154,7 @@ const WorkoutEditor = ({ show, setShow }) => {
 
                           <View className="basis-[14%]">
                             <Text className="text-xs font-light">Weight</Text>
-                            <TextInput className="bg-slate-300"
+                            <TextInput keyboardType="numeric" className="bg-slate-300"
                               defaultValue={item.cycle[0].weight}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -144,7 +172,7 @@ const WorkoutEditor = ({ show, setShow }) => {
 
                           <View className="basis-[14%]">
                             <Text className="text-xs font-light">RiR</Text>
-                            <TextInput className="bg-slate-300"
+                            <TextInput keyboardType="numeric" className="bg-slate-300"
                               defaultValue={item.cycle[0].rir}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -189,7 +217,7 @@ const WorkoutEditor = ({ show, setShow }) => {
                               </View>
 
                               <View className="basis-[27%]">
-                                <TextInput className="bg-slate-300" defaultValue={c.reps}
+                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.reps}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -204,7 +232,7 @@ const WorkoutEditor = ({ show, setShow }) => {
                               </View>
 
                               <View className="basis-[27%]">
-                                <TextInput className="bg-slate-300" defaultValue={c.weight}
+                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.weight}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -219,7 +247,7 @@ const WorkoutEditor = ({ show, setShow }) => {
                               </View>
 
                               <View className="basis-[14%]">
-                                <TextInput className="bg-slate-300" defaultValue={c.rir}
+                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.rir}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -294,37 +322,48 @@ const WorkoutEditor = ({ show, setShow }) => {
     })
   }
 
-  const save = ()=>{
-    if(!title.length){
+  const close = () => {
+
+    setTitle(null)
+    setExercises([])
+    setDescription(null)
+    setWorkout(null)
+    setDay(null)
+    setShow(false)
+    setShowCalendar(false)
+  }
+
+  const save = () => {
+    if (!title.length) {
       alert('Title is required!')
       return;
     }
-    
-    let exer = exercises.map(item=>{
-      
-      if(item.odd){
-        item.cycle = [...item.cycle.map(set=>{
+
+
+    let exer = exercises.map(item => {
+
+      if (item.odd) {
+        item.cycle = [...item.cycle.map(set => {
           set.sets = '1'
           return set;
         })]
-      }else{
+      } else {
         item.cycle = [item.cycle[0]]
       }
       return item;
     })
-    
-    exer.map(exe=>{
-      console.log('\n\n')
-      console.log(exe.id)
-      exe.cycle.map(set=>{
-        console.log(JSON.stringify(set))
-      })
-    })
 
 
-    addWorkout(title,JSON.stringify(exer),description,new Date(Date.now()).toISOString())
 
 
+    if (workout) {
+      updateWorkout(workout.id, title, JSON.stringify(exer), description, (!day) ? new Date(Date.now()).toISOString() : new Date(day).toISOString())
+    } else {
+      addWorkout(title, JSON.stringify(exer), description, (!day) ? new Date(Date.now()).toISOString() : new Date(day).toISOString())
+    }
+
+
+    close()
 
   }
 
@@ -335,15 +374,59 @@ const WorkoutEditor = ({ show, setShow }) => {
     >
 
       <View className="flex-1 bg-slate-500 gap-3">
-        <Pressable className="bg-slate-600 justify-center h-12" onPress={() => setShow(false)}>
-          <Image className="w-6 ml-3" tintColor={'#223'} resizeMode='contain' source={require('../../assets/icons/arrow.png')} />
-        </Pressable>
+        <View className="bg-slate-600 h-12 flex-row items-center justify-between">
+          <Pressable onPress={() => {
+            if (checkChanges()) {
+              Alert.alert('Warning', 'Do you want to save changes', [{
+                text: 'Save',
+                onPress: () => {
+                  save();
+                }
+              },
+              {
+                text: 'Cancel',
+                onPress: () => {
+                  close();
+                }
+              }
+              ])
+            } else {
+              close();
+            }
+
+          }}>
+            <Image className="w-6 ml-3" tintColor={'#223'} resizeMode='contain' source={require('../../assets/icons/arrow.png')} />
+          </Pressable>
+          <Pressable className="flex-row items-center gap-x-3" onPress={() => { setShowCalendar(prev => !prev) }}>
+            {(day) ? <Pressable onPress={() => { setDay(null); setShowCalendar(false) }}><Text className="text-slate-800 font-bold">Clear Date</Text></Pressable> : ''}
+            <Image className="w-6 mr-3" tintColor={'#223'} resizeMode='contain' source={require('../../assets/icons/calendar.png')} />
+          </Pressable>
+        </View>
+
+        {showCalendar ?
+          <Calendar
+            className="my-1"
+            enableSwipeMonths={true}
+            markingType="dot"
+            markedDates={{ [day]: { selected: true, color: '#238' } }}
+            theme={{
+              calendarBackground: '#475569',
+              dayTextColor: '#999',
+              textDisabledColor: '#8887',
+            }} style={{ backgroundColor: '#475569' }}
+            onDayPress={(d) => {
+
+              setDay(`${d.year}-${d.month <= 9 ? '0' + d.month : d.month}-${d.day}`)
+
+            }}
+          />
+          : ''}
 
         <View className="p-3">
-          <TextInput className="text-lg" placeholder='Enter Title' onChangeText={(v) => setTitle(v)} />
+          <TextInput className="text-lg" placeholder='Enter Title' defaultValue={title} onChangeText={(v) => setTitle(v)} />
 
-          <Pressable className="self-end" onPress={() => addNewExercise()}>
-            <Text className="text-sm font-light text-gray-800">Add New Exercise</Text>
+          <Pressable className="self-end mt-3" onPress={() => addNewExercise()}>
+            <Text className="text-sm font-light text-gray-800 p-1">Add New Exercise</Text>
           </Pressable>
           <View className="max-h-[50%]">
             {dipslayExercises()}
@@ -358,9 +441,9 @@ const WorkoutEditor = ({ show, setShow }) => {
             defaultValue={description}
             onChangeText={(v) => setDescription(v)}
           />
-          <Pressable 
-          onPress={()=>save()}
-          className="flex items-center p-3 bg-slate-600 mt-3">
+          <Pressable
+            onPress={() => save()}
+            className="flex items-center p-3 bg-slate-600 mt-3">
             <Text className="text-green-100 text-xl font-extrabold">Save</Text>
           </Pressable>
 

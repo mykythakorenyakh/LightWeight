@@ -34,6 +34,39 @@ export const addWorkout = (title, exercises, desc, date) => {
 
 }
 
+export const updateWorkout = (id, title, exercises, desc, date) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'UPDATE workout SET title=$title, exercises=$exercises, desc=$desc, date=$date WHERE id=$id;'
+        );
+
+        let result = statement.executeSync({ $id: id, $title: title, $exercises: exercises, $desc: desc, $date: date });
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+export const deleteWorkout = (id) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'DELETE FROM workout WHERE id=$id;'
+        );
+
+        let result = statement.executeSync({ $id: id });
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
 export const getWorkouts = () => {
     updateWorkouts()
     try {
