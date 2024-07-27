@@ -59,7 +59,7 @@ const MainLayout = () => {
         }}
       />
       <Drawer.Screen
-        name="(properties)" // This is the name of the page and must match the url from root
+        name="(profile)" // This is the name of the page and must match the url from root
         options={{
           drawerLabel: 'Profile',
           title: 'Profile',

@@ -59,20 +59,21 @@ const PlanHome = () => {
 
         return (
           <Pressable
-            key={item.id}
+            key={`block-${item.id}`}
             onPress={() => editWorkout(item)}
             onLongPress={() => removeWorkout(item)}
-            className="flex flex-col w-[48%] max-h-[200px] bg-slate-400 rounded p-1">
-            <View className="flex-col">
+            className="flex flex-col w-[48%] max-h-[200px] min-h-[150px] bg-slate-400 rounded p-1">
+
+            <View className="flex-col border-b-[0.5px] border-gray-500">
               <Text className="text-sm font-extralight text-slate-900 text-[8px] self-end">{date}</Text>
               <Text className="text-sm font-light mt-[-7px] text-slate-900">{item.title}</Text>
             </View>
 
-            <View>
+            <View className="px-1">
               {JSON.parse(item.exercises).map((exer, index) => {
                 
                 return (
-                  <View key={exer.id} className="flex-row">
+                  <View key={`block-${item.id}-item-${exer.id}`} className="flex-row">
                     <View className="flex-row">
                       <Text className="text-xs font-extralight">{index + 1})</Text>
                       <Text className="pl-1 text-xs font-light text-slate-800 italic">{exer.title}</Text>
@@ -85,9 +86,9 @@ const PlanHome = () => {
 
                         :
                         <View className="flex-col pl-1 text-xs font-light">
-                          {exer.cycle.map(set => {
+                          {exer.cycle.map((set,index) => {
                             return (
-                              <View className="flex-row items-baseline">
+                              <View key={`block-${item.id}-item-${exer.id}-subitem-${set.id}`} className="flex-row items-baseline">
                                 <Text className="text-xs font-extralight">{set.reps}</Text>
                                 <Text className="text-[8px] font-extralight">{exer.repsType != 'rep' ? exer.repsType : 'reps'}</Text>
                                 <Text className="text-[9px] font-extralight"> {set.weight != 0 ? '+' + set.weight + 'kg' : ''} </Text>
@@ -104,7 +105,8 @@ const PlanHome = () => {
 
               })}
             </View>
-            <ScrollView className="px-1 mt-3">
+
+            <ScrollView className="px-1 mt-3 border-t-[0.5px] border-gray-500">
               <Text className="text-[9px] font-extralight"><Text className="text-sm text-yellow-600 ">{item.desc ? 'ⓘ' : ''}</Text>   {item.desc}</Text>
             </ScrollView>
 
