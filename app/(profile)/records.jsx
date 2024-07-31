@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import { getExercises } from '../../services/database';
 import DropDown from '../../components/DropDown';
+
 
 const Records = () => {
 
@@ -14,10 +15,12 @@ const Records = () => {
     const [types, setTypes] = useState()
     const [type, setType] = useState('All')
 
-    const [amountUp,setAmountUp] = useState(true)
-    const [weightUp,setWeightUp] = useState(true)
+    const [amountUp, setAmountUp] = useState(true)
+    const [weightUp, setWeightUp] = useState(true)
 
-    useEffect(() => {
+    const [refreshing, setRefreshing] = useState(true);
+
+    const update = ()=>{
         const results = [...new Set(getExercises().getAllSync().reverse())]
         if (results) {
             const arr = []
@@ -51,9 +54,21 @@ const Records = () => {
             setTitles(['All', ...new Set(arr.map(item => item.title))])
             setTypes(['All', ...new Set(arr.map(item => item.type))])
         }
+    }
 
+    useEffect(() => {
+        update()
+        
+        setRefreshing(false)
     }, [])
 
+    const onRefresh = ()=>{
+        setRefreshing(true)
+
+        update()
+
+        setRefreshing(false)
+    }
 
     const displayExercises = () => {
         if (exercises) {
@@ -69,10 +84,10 @@ const Records = () => {
                             if (type === 'All') return true;
                             else return set.type == type;
 
-                        }).sort((set1,set2)=>{
-                            return (amountUp)?set2.amount - set1.amount:set1.amount - set2.amount;
-                        }).sort((set1,set2)=>{
-                            return (weightUp)?set2.weight - set1.weight:set1.weight - set2.weight;
+                        }).sort((set1, set2) => {
+                            return (amountUp) ? set2.amount - set1.amount : set1.amount - set2.amount;
+                        }).sort((set1, set2) => {
+                            return (weightUp) ? set2.weight - set1.weight : set1.weight - set2.weight;
                         }).map((item, index) => (
                             <View className="flex-row justify-between bg-slate-600 p-3 border-x-2 border-x-slate-900" key={item.id + "-" + index}>
 
@@ -95,7 +110,13 @@ const Records = () => {
     }
 
     return (
-        <View className="flex-1 bg-slate-800">
+
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+
+            className="flex-1 bg-slate-800">
             <View className="flex-row p-3 gap-x-[3px] items-center">
                 <View>
                     <Text className="text-slate-400">Exercise</Text>
@@ -115,15 +136,15 @@ const Records = () => {
                         style="bg-slate-50 w-[70px]"
                     />
                 </View>
-                <Pressable onPress={()=>setWeightUp(prev=>!prev)}>
-                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{weightUp?'↑':'↓'}Weight</Text>
+                <Pressable onPress={() => setWeightUp(prev => !prev)}>
+                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{weightUp ? '↑' : '↓'}Weight</Text>
                 </Pressable>
-                <Pressable onPress={()=>setAmountUp(prev=>!prev)}>
-                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{amountUp?'↑':'↓'}Amount</Text>
+                <Pressable onPress={() => setAmountUp(prev => !prev)}>
+                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{amountUp ? '↑' : '↓'}Amount</Text>
                 </Pressable>
             </View>
             {displayExercises()}
-        </View>
+        </ScrollView>
     )
 }
 

@@ -4,7 +4,9 @@ import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { Calendar } from 'react-native-calendars'
 
-import { addWorkout, updateWorkout } from '../../services/database.jsx';
+import { addWorkout, updateWorkout, getExercises } from '../../services/database.jsx';
+import DropDown from '../../components/DropDown.jsx';
+
 
 const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
   const [title, setTitle] = useState('')
@@ -13,6 +15,8 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
 
   const [showCalendar, setShowCalendar] = useState(false)
   const [day, setDay] = useState(null)
+
+  const [titles,setTitles] = useState();
 
   useEffect(() => {
     if (workout) {
@@ -23,14 +27,38 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
 
       const d = new Date(workout.date);
       setDay(`${d.getFullYear()}-${d.getMonth() + 1 <= 9 ? '0' + (d.getMonth() + 1) : d.month}-${d.getDate()}`)
+
     }
+
+    const results = [...new Set(getExercises().getAllSync().reverse())]
+    if (results) {
+      const arr = []
+      results.map(item => {
+        return new Object(JSON.parse(item.exercises)).map(exer => {
+          if (!exer.odd) {
+            arr.push(exer.title)
+          } else {
+            exer.cycle.map(set => {
+              arr.push(exer.title)
+              return set;
+            })
+          }
+          return exer
+        })
+      })
+
+      setTitles([...new Set([...arr])])
+
+    }
+
+
 
   }, [workout])
 
   const checkChanges = () => {
     if (workout) {
       if (workout.title != title) return true;
-      
+
       if (JSON.parse(workout.exercises).length != exercises.length) return true;
 
       if (workout.desc !== description) return true;
@@ -83,7 +111,7 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
   const dipslayExercises = () => {
     if (exercises.length) {
       return (
-        <ScrollView className="flex-col">
+        <ScrollView className="flex-col" >
           {
 
             exercises.map((item) => {
@@ -102,9 +130,16 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                       className="flex flex-row py-1 bg-slate-400  border-l-[6px] border-l-slate-200 mb-1 items-start px-1">
                       <View className="basis-[40%]">
                         <Text className="text-xs font-light">Exercise</Text>
-                        <TextInput className="bg-slate-300"
-                          defaultValue={item.title}
-                          onChangeText={(v) => changeExercise({ id: item.id, title: v })} />
+                        <DropDown
+                          data={titles}
+                          defaultText={item.title}
+                          onTextChange={(v) => changeExercise({ id: item.id, title: v })}
+                          onSelectChange={(v) => changeExercise({ id: item.id, title: v })}
+                          isReletive={true}
+                          style="bg-slate-200 z-[998]"
+                          barStyle="bg-slate-200 flex-1 pl-1 pr-5"
+                        />
+
                       </View>
 
                       {!item.odd ?                                                                                                      //CYCLE PANEL
@@ -341,10 +376,12 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
 
 
     let exer = exercises.map(item => {
+      item.title = String(item.title).trim()
 
       if (item.odd) {
         item.cycle = [...item.cycle.map(set => {
           set.sets = '1'
+
           return set;
         })]
       } else {
@@ -359,7 +396,7 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
     if (workout) {
       updateWorkout(workout.id, title, JSON.stringify(exer), description, (!day) ? new Date(Date.now()).toISOString() : new Date(day).toISOString())
     } else {
-      addWorkout(title, JSON.stringify(exer), description, (!day) ? new Date(Date.now()).toISOString() : new Date(day).toISOString())
+      addWorkout(title.trim(), JSON.stringify(exer), description, (!day) ? new Date(Date.now()).toISOString() : new Date(day).toISOString())
     }
 
 

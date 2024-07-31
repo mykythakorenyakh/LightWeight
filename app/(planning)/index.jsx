@@ -124,7 +124,7 @@ const PlanHome = () => {
       <View className="flex-1 px-5 py-3 bg-slate-800 ">
 
         <View className="flex w-full z-50 items-center self-center absolute bottom-10">
-          <Pressable onPress={() => setShowEditor(true)} className="flex w-14 h-14 bg-cyan-600 justify-center items-center rounded-full">
+          <Pressable onPress={() => setShowEditor(true)} className="flex w-14 h-14 bg-blue-500 justify-center items-center rounded-full">
             <Image className="w-6 h-6" style={{ tintColor: '#fcfcfc' }} source={require('../../assets/icons/plus.png')} />
           </Pressable>
         </View>

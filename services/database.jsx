@@ -5,7 +5,7 @@ const db = SQLite.openDatabaseSync('gym');
 
 
 const updateWorkouts = () => {
-    //db.execSync('DROP TABLE IF EXISTS profile')
+    //db.execSync('DROP TABLE IF EXISTS timer')
 
     //WORKOUTS
     db.execSync(`
@@ -32,6 +32,18 @@ const updateWorkouts = () => {
             weight TEXT
             );
             `)
+
+    //TIMERS
+    db.execSync(`
+        PRAGMA journal_mode = WAL;
+        CREATE TABLE IF NOT EXISTS timer (
+        id INTEGER NOT NULL, 
+        title TEXT,
+        repeat TEXT,
+        timers TEXT
+        );
+        `)
+
 }
 
 //WORKOUT
@@ -163,6 +175,73 @@ export const getProfile = () => {
         );
 
         let result = statement.executeSync();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+
+//TIMERS
+export const addTimer = (id, title, repeat, timers) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'INSERT INTO timer (id, title, repeat, timers) VALUES ($id, $title, $repeat, $timers);'
+        );
+
+        let result = statement.executeSync({ $id: id, $title: title, $repeat: repeat, $timers: timers });
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+export const updateTimer = (id, title, repeat, timers) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'UPDATE timer SET title=$title, repeat=$repeat, timers=$timers WHERE id=$id;'
+        );
+
+        let result = statement.executeSync({ $id: id, $title: title, $repeat: repeat, $timers: timers });
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+export const getTimers = () => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'SELECT * FROM timer'
+        );
+
+        let result = statement.executeSync();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+export const deleteTimer = (id) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'DELETE FROM timer WHERE id=$id;'
+        );
+
+        let result = statement.executeSync({ $id: id });
         return result;
 
     } catch (error) {
