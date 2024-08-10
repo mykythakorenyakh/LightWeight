@@ -5,7 +5,7 @@ const db = SQLite.openDatabaseSync('gym');
 
 
 const updateWorkouts = () => {
-    //db.execSync('DROP TABLE IF EXISTS timer')
+    //db.execSync('DROP TABLE IF EXISTS profile')
 
     //WORKOUTS
     db.execSync(`
@@ -175,6 +175,23 @@ export const getProfile = () => {
         );
 
         let result = statement.executeSync();
+        return result;
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+export const deleteProfile = (id) => {
+    updateWorkouts()
+    try {
+
+        const statement = db.prepareSync(
+            'DELETE FROM profile WHERE id=$id;'
+        );
+
+        let result = statement.executeSync({ $id: id });
         return result;
 
     } catch (error) {

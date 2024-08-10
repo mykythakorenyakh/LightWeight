@@ -2,7 +2,8 @@ import { View, Text, ImageBackground, TextInput, ScrollView, Image, Pressable } 
 import React, { useEffect, useState } from 'react'
 import DropDown from '../../components/DropDown'
 
-import { getProfile, updateProfile } from '../../services/database.jsx'
+import { getProfile, updateProfile, deleteProfile } from '../../services/database.jsx'
+import Graph from '../../components/Graph.jsx'
 
 
 
@@ -18,7 +19,10 @@ const PropHome = () => {
 
   const [save, setSave] = useState(false)
 
-  const update = ()=>{
+  const [tab, setTab] = useState('weight');
+  const [graphData, setGraphData] = useState();
+
+  const update = () => {
     const result = getProfile().getAllSync().reverse();
     if (result.length) {
       setParams(result)
@@ -31,9 +35,82 @@ const PropHome = () => {
 
       setSave(false)
 
-      console.log(result)
+
     }
+    updateGraph();
   }
+
+  const updateGraph = () => {
+    const result = getProfile().getAllSync();
+    if (result.length == 0) {
+      return;
+    }
+    if (tab == 'weight') {
+      setGraphData(prev => {
+        return result.map(item => {
+          return {
+            id: item.id,
+            date: item.date,
+            value: Number(item.weight),
+            type: 'kg',
+          }
+        })
+      })
+    } else if (tab == 'neck') {
+      setGraphData(prev => {
+        return result.map(item => {
+          return {
+            id: item.id,
+            date: item.date,
+            value: Number(item.neck),
+            type: 'cm',
+          }
+        })
+      })
+    }
+    else if (tab == 'biceps') {
+      setGraphData(prev => {
+        return result.map(item => {
+          return {
+            id: item.id,
+            date: item.date,
+            value: Number(item.biceps),
+            type: 'cm',
+          }
+        })
+      })
+    } else if (tab == 'weist') {
+      setGraphData(prev => {
+        return result.map(item => {
+          return {
+            id: item.id,
+            date: item.date,
+            value: Number(item.weist),
+            type: 'cm',
+          }
+        })
+      })
+    } else if (tab == 'height') {
+      setGraphData(prev => {
+        return result.map(item => {
+          return {
+            id: item.id,
+            date: item.date,
+            value: Number(item.height),
+            type: 'cm',
+          }
+        })
+      })
+    }
+
+  }
+
+  useEffect(() => {
+
+    updateGraph();
+
+
+  }, [tab])
 
   useEffect(() => {
     update();
@@ -43,13 +120,13 @@ const PropHome = () => {
   useEffect(() => {
     if (params.length) {
       const latest = params[0];
-      
+
       if (latest.height != height
         || latest.neck != neck
         || latest.biceps != biceps
         || latest.weist != weist
         || latest.weight != weight) {
-          
+
         console.log('change')
         setSave(true)
       } else {
@@ -57,8 +134,24 @@ const PropHome = () => {
       }
       return
     }
-    setSave(true)
+    if (!height
+      || !neck
+      || !biceps
+      || !weist
+      || !weight) {
+      setSave(false)
+    } else {
+      setSave(true)
+    }
+
   }, [height, neck, biceps, weist, weight])
+
+  const deleteResults = (id) => {
+    if (id) {
+      deleteProfile(id)
+      update()
+    }
+  }
 
   return (
     <View className="flex-1 flex-col bg-slate-800">
@@ -73,7 +166,7 @@ const PropHome = () => {
             <Pressable
               onPress={() => {
                 console.log('save')
-                updateProfile(new Date(Date.now()).toISOString(),height,neck,biceps,weist,weight);
+                updateProfile(new Date(Date.now()).toISOString(), Number(height.replace(",", ".")), Number(neck.replace(",", ".")), Number(biceps.replace(",", ".")), Number(weist.replace(",", ".")), Number(weight.replace(",", ".")));
                 update();
               }}
               className="absolute w-14 h-14 bg-green-700 self-center top-[250px] rounded-full items-center justify-center">
@@ -111,14 +204,32 @@ const PropHome = () => {
         </View>
 
 
-        <View className="flex-1">
-          <DropDown
-            selectOnly={true}
-            style={" w-[150px] bg-slate-50 mx-3"}
-            data={['neck', 'biceps', 'weist', 'weight']}
-          />
+        <View className="flex-1 gap-y-1">
+          <View className="flex-row items-center">
+            <Text className="mx-1 text-slate-400">
+              Tab
+            </Text>
+            <DropDown
+              selectOnly={true}
+              style={" w-[150px] bg-slate-50"}
+              data={['neck', 'biceps', 'weist', 'weight']}
+              onSelectChange={(v) => setTab(v)}
+              defaultText={tab}
+            />
+          </View>
 
-
+          <View className="border-t-[1px]"> 
+            <Graph graphData={graphData}
+              height={500}
+              bgColor={'#2239'}
+              textColor='#fcfcfc99'
+              dateColor='#3339'
+              valueColor='#333a'
+              stickColor='#faa75599'
+              dotColor='#333'
+              onDelete={(id)=>deleteResults(id)}
+            />
+          </View>
         </View>
 
       </ScrollView>

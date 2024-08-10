@@ -1,7 +1,17 @@
 import { View, Text, Pressable, TextInput, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange, onTimeChange }) => {
+import { Audio, InterruptionModeIOS } from 'expo-av';
+
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
+
+
+
+const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange, onTimeChange, resetOnly }) => {
+
+
+    const [sound, setSound] = useState();
 
     const [pause, setPause] = useState(true);
 
@@ -9,6 +19,8 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
     const [seconds, setSeconds] = useState(0);
 
     const [title, setTitle] = useState();
+
+    const [timer, setTimer] = useState()
 
     const timeFormat = (time) => {
         if (Number(time) <= 9) { return '0' + Number(time) }
@@ -18,8 +30,27 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
         }
     }
 
+    async function playSound() {
+        const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/timer/oi2x.mp3')
+        );
+        setSound(sound);
+        await sound.playAsync();
+    }
+
+    useEffect(() => {
+        return sound
+            ? () => {
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound]);
+
     useEffect(() => {
         if (time) {
+            Audio.setAudioModeAsync({
+                shouldDuckAndroid:false,
+                interruptionModeIOS:InterruptionModeIOS.MixWithOthers,
+            })
             setMinutes(time.minutes);
             setSeconds(time.seconds);
         }
@@ -31,33 +62,65 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
     }, [timerTitle])
 
     useEffect(() => {
+
         setPause(!startTimer)
         if (!pause && onPause) {
             onPause()
+
         }
+
 
     }, [startTimer])
 
+
     useEffect(() => {
-        if (!pause) {
-            if (minutes <= 0 && seconds <= 0) {
-                if (onFinish) onFinish();
-                setPause(true)
-                setMinutes(time.minutes)
-                setSeconds(time.seconds)
-            }
-            let interval = setInterval(() => setSeconds((prev) => {
-                if (prev == 0) {
-                    setMinutes((prev) => prev - 1)
-                    return 59;
+
+
+        const tick = async () => {
+            if (!pause) {
+                console.log(minutes)
+                if (minutes == 0 && seconds == 4) {
+                    playSound()
                 }
-                return prev - 1
-            }), 1000)
-            return () => clearInterval(interval);
+                if (minutes <= 0 && seconds <= 0) {
+                    if (onFinish) onFinish();
+                    setPause(true)
+                    setMinutes(time.minutes)
+                    setSeconds(time.seconds)
+                }
+                if (!timer) {
+                    let interval = setInterval(() => {
+
+                        setSeconds((prev) => {
+                            if (prev == 0) {
+                                setMinutes((prev) => prev - 1)
+                                return 59;
+                            }
+                            return prev - 1
+                        });
+
+                    }, 1000)
+                    setTimer(interval)
+                    return () => clearInterval(interval)
+
+                }
+            }
+
+            if (pause) {
+                clearInterval(timer)
+                setTimer(null);
+            }
+
+
         }
 
 
-    }, [seconds, minutes, pause])
+
+
+        tick()
+
+
+    }, [minutes, seconds, pause])
 
     const displayTime = () => {
         if (pause) {
@@ -128,20 +191,33 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                     }
                 }}
             />
-            <Pressable onPress={() => {
-                if (minutes || seconds) {
-                    if (!pause && onPause) {
-                        onPause()
+            {resetOnly ?
+                <Pressable onPress={() => {
+                    setMinutes(time.minutes)
+                    setSeconds(time.seconds)
+                }}>
+
+                    {(time.minutes!=minutes || time.seconds!=seconds)?<Image tintColor={'#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} />:''}
+
+                </Pressable>
+                :
+                <Pressable onPress={() => {
+                    if (minutes || seconds) {
+                        if (!pause && onPause) {
+                            onPause()
+                        }
+
+
+                        setPause(prev => !prev)
+
                     }
+                }}>
+                    {pause
+                        ? <Image tintColor={(minutes || seconds) ? '#223' : '#2239'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
+                        : <Image tintColor={'#223'} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
+                </Pressable>
+            }
 
-                    setPause(prev => !prev)
-
-                }
-            }}>
-                {pause
-                    ? <Image tintColor={(minutes || seconds) ? '#223' : '#2239'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
-                    : <Image tintColor={'#223'} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
-            </Pressable>
         </View>
     )
 }

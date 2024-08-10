@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react'
 import Timer from './Timer'
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { Audio } from 'expo-av';
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChange, onTitleChange }) => {
 
     const [timers, setTimers] = useState([]);
@@ -11,6 +15,9 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
     const [repeat, setRepeat] = useState();
 
     const [pause, setPause] = useState(true)
+    const [starting, setStarting] = useState(false)
+
+
 
     useEffect(() => {
         setTimers(data)
@@ -18,6 +25,16 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
         setRepeat(repeatAmount)
 
     }, [])
+
+
+    useEffect(()=>{
+        if(!timers){
+            if(data){
+                setTimers(data)
+            }
+        }
+
+    },[timers])
 
 
     const createTimer = () => {
@@ -78,15 +95,27 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                                 timerTitle={item.title}
                                 time={item.time}
                                 startTimer={play}
+                                resetOnly={true}
                                 onFinish={() => {
                                     setOrder(prev => prev + 1);
-                                    if (order + 1 >= timers.length) {
-                                        if (!repeat) {
-                                            setPause(true)
-                                        }
+                                    if (repeat == 1 && order + 1 >= timers.length) {
                                         setOrder(0)
-                                        setRepeat(prev => prev - 1)
+                                        setRepeat(repeatAmount)
+                                        setPause(true)
+                                        return;
                                     }
+                                    else {
+                                        if (order + 1 >= timers.length) {
+                                            if (!repeat) {
+                                                setPause(true)
+                                            }
+                                            setOrder(0)
+                                            setRepeat(prev => prev - 1)
+                                        }
+                                    }
+
+
+
                                 }}
 
                                 onTimeChange={(t) => {
@@ -169,10 +198,44 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
 
 
                 <Pressable onPress={() => {
-                    setPause(prev => !prev)
+                    setOrder(0)
+                    setRepeat(repeatAmount)
+                    setTimers(null)
+                    setPause(true)
+
                 }}>
+
+                    {(order!=0 || repeat!=repeatAmount || !pause)?<Image tintColor={starting ? '#2239' : '#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} />:''}
+
+                </Pressable>
+
+                <Pressable onPress={(!starting) ? async () => {
+                    if (pause) {
+                        const { sound } = await Audio.Sound.createAsync(require('../assets/sounds/timer/oi.mp3'));
+                        setStarting(true)
+                        await sound.setPositionAsync(0)
+                        await sound.setVolumeAsync(0.25)
+                        await sound.playAsync();
+                        await delay(1000)
+
+                        await sound.setPositionAsync(0)
+                        await sound.setVolumeAsync(0.5)
+                        await sound.playAsync();
+                        await delay(1000)
+
+                        await sound.setPositionAsync(0)
+                        await sound.setVolumeAsync(1)
+                        await sound.playAsync();
+                        setPause(prev => !prev)
+                        setStarting(false)
+
+
+                    } else {
+                        setPause(prev => !prev)
+                    }
+                } : null}>
                     {pause
-                        ? <Image tintColor={'#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
+                        ? <Image tintColor={starting ? '#2239' : '#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
                         : <Image tintColor={'#223'} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
                 </Pressable>
             </View>

@@ -16,7 +16,6 @@ const FuncHome = () => {
   useEffect(() => {
     const result = getTimers().getAllSync();
     if (result.length) {
-      console.log(JSON.stringify(result))
       setTimers([...result].map(item => {
         if (item.timers == "") {
           item.timers = null;
@@ -154,7 +153,7 @@ const FuncHome = () => {
 
   return (
     <View className="flex-1 bg-slate-800">
-
+      
       <View className="flex absolute bottom-10 w-full items-center z-[1]">
         <Pressable
           onPress={() => {
