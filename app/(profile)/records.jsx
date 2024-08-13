@@ -1,11 +1,14 @@
 import { View, Text, ScrollView, Pressable, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { getExercises } from '../../services/database';
 import DropDown from '../../components/DropDown';
+import { ThemeContext } from '../_layout';
 
 
 const Records = () => {
+
+    const { colors } = useContext(ThemeContext)
 
     const [exercises, setExercises] = useState();
 
@@ -20,7 +23,7 @@ const Records = () => {
 
     const [refreshing, setRefreshing] = useState(true);
 
-    const update = ()=>{
+    const update = () => {
         const results = [...new Set(getExercises().getAllSync().reverse())]
         if (results) {
             const arr = []
@@ -58,11 +61,11 @@ const Records = () => {
 
     useEffect(() => {
         update()
-        
+
         setRefreshing(false)
     }, [])
 
-    const onRefresh = ()=>{
+    const onRefresh = () => {
         setRefreshing(true)
 
         update()
@@ -74,8 +77,12 @@ const Records = () => {
         if (exercises) {
             return (
 
-                <ScrollView>
-                    <View className="p-3 gap-y-[1px]">
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
+                    <View className="p-3 gap-y-[1px] min-h-[600px]">
                         {exercises.filter(set => {
                             if (title === 'All') return true;
                             else return set.title == title;
@@ -89,14 +96,36 @@ const Records = () => {
                         }).sort((set1, set2) => {
                             return (weightUp) ? set2.weight - set1.weight : set1.weight - set2.weight;
                         }).map((item, index) => (
-                            <View className="flex-row justify-between bg-slate-600 p-3 border-x-2 border-x-slate-900" key={item.id + "-" + index}>
+                            <View
+                                style={{
+                                    backgroundColor: colors.main.optionBg,
+                                    borderLeftColor: colors.main.button,
+                                    borderRightColor: colors.main.button
+                                }}
+                                className="flex-row justify-between  p-3 border-x-2 " key={item.id + "-" + index}>
 
-                                <Text className="w-[100px] text-slate-800 text-lg font-bold">{item.title}</Text>
-                                <Text className=" text-ms text-slate-800 text-lg">
-                                    {item.amount}<Text className="text-[10px] text-slate-700">{(item.type !== 'rep') ? item.type + ' ' : ' '}
+                                <Text className="w-[100px] text-lg font-bold"
+                                    style={{
+                                        color: colors.main.text,
+                                    }}
+                                >{item.title}</Text>
+                                <Text className=" text-ms text-lg"
+                                    style={{
+                                        color: colors.main.subText,
+                                    }}
+                                >
+                                    {item.amount}<Text className="text-[10px]"
+                                        style={{
+                                            color: colors.main.subText,
+                                        }}
+                                    >{(item.type !== 'rep') ? item.type + ' ' : ' '}
                                     </Text>
 
-                                    {item.weight != 0 ? <Text className="w-[30px] text-right text-slate-800"> x {item.weight}kg</Text> : ''}
+                                    {item.weight != 0 ? <Text className="w-[30px] text-right"
+                                        style={{
+                                            color: colors.main.subText,
+                                        }}
+                                    > x {item.weight}kg</Text> : ''}
                                 </Text>
 
 
@@ -111,20 +140,25 @@ const Records = () => {
 
     return (
 
-        <ScrollView
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+        <View
 
-            className="flex-1 bg-slate-800">
-            <View className="flex-row p-3 gap-x-[3px] items-center">
+
+            className="flex-1 "
+            style={{
+                backgroundColor: colors.main.bg
+            }}
+        >
+            <View className="flex-row p-3 gap-x-[3px] items-end">
                 <View>
                     <Text className="text-slate-400">Exercise</Text>
                     <DropDown
                         data={titles}
                         selectOnly={true}
                         onSelectChange={(v) => setTitle(v)}
-                        style="bg-slate-50 w-[120px]"
+                        style="w-[120px]"
+                        inputBgColor={colors.main.optionBg}
+                        optionBgColor={colors.main.optionBg}
+                        textColor={colors.main.text}
                     />
                 </View>
                 <View>
@@ -133,18 +167,31 @@ const Records = () => {
                         data={types}
                         selectOnly={true}
                         onSelectChange={(v) => setType(v)}
-                        style="bg-slate-50 w-[70px]"
+                        style="w-[70px]"
+                        inputBgColor={colors.main.optionBg}
+                        optionBgColor={colors.main.optionBg}
+                        textColor={colors.main.text}
                     />
                 </View>
                 <Pressable onPress={() => setWeightUp(prev => !prev)}>
-                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{weightUp ? '↑' : '↓'}Weight</Text>
+                    <Text className="font-extrabold py-2 px-1"
+                        style={{
+                            color: colors.main.button,
+                            backgroundColor: colors.main.optionBg,
+                        }}
+                    >{weightUp ? '↑' : '↓'}Weight</Text>
                 </Pressable>
                 <Pressable onPress={() => setAmountUp(prev => !prev)}>
-                    <Text className="font-extrabold text-slate-300 py-3 px-1 bg-sky-950">{amountUp ? '↑' : '↓'}Amount</Text>
+                    <Text className="font-extrabold py-2 px-1"
+                        style={{
+                            color: colors.main.button,
+                            backgroundColor: colors.main.optionBg,
+                        }}
+                    >{amountUp ? '↑' : '↓'}Amount</Text>
                 </Pressable>
             </View>
             {displayExercises()}
-        </ScrollView>
+        </View>
     )
 }
 

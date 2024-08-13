@@ -1,13 +1,16 @@
 import { View, Text, ImageBackground, TextInput, ScrollView, Image, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import DropDown from '../../components/DropDown'
 
 import { getProfile, updateProfile, deleteProfile } from '../../services/database.jsx'
 import Graph from '../../components/Graph.jsx'
 
+import { ThemeContext } from '../_layout.jsx'
 
 
 const PropHome = () => {
+
+  const {colors} = useContext(ThemeContext)
 
   const [params, setParams] = useState([])
 
@@ -21,6 +24,8 @@ const PropHome = () => {
 
   const [tab, setTab] = useState('weight');
   const [graphData, setGraphData] = useState();
+
+  const [poseur,setPouser] = useState(require('../../assets/bg/profilelight.png'))
 
   const update = () => {
     const result = getProfile().getAllSync().reverse();
@@ -105,6 +110,15 @@ const PropHome = () => {
 
   }
 
+  useEffect(()=>{
+    if(colors.dark){
+      setPouser(require('../../assets/bg/profile.png'));
+    }else{
+      setPouser(require('../../assets/bg/profilelight.png'));
+    }
+  },[colors])
+
+
   useEffect(() => {
 
     updateGraph();
@@ -154,12 +168,16 @@ const PropHome = () => {
   }
 
   return (
-    <View className="flex-1 flex-col bg-slate-800">
+    <View className="flex-1 flex-col"
+      style={{
+        backgroundColor:colors.main.bg
+      }}
+    >
 
       <ScrollView>
 
         <View className="flex-1 items-center w-[360px] mt-[-20px]">
-          <Image resizeMode='contain' className="flex-1 w-[350px]" source={require('../../assets/bg/profile.png')} />
+          <Image resizeMode='contain' className="flex-1 w-[350px]" source={poseur} />
 
 
           {save ?
@@ -177,27 +195,62 @@ const PropHome = () => {
 
 
           <View className="absolute bottom-[100px] left-[20px] top-[145px]">
-            <TextInput keyboardType='numeric' className="bg-slate-100 font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='neck' defaultValue={neck} onChangeText={(v) => setNeck(v)} />
+            <TextInput keyboardType='numeric'
+            style={{
+              backgroundColor:colors.main.optionBg,
+              borderBottomWidth:(!colors.dark)?1:0,
+              borderBottomColor:colors.button,
+              
+            }}
+            className=" font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='neck' defaultValue={neck} onChangeText={(v) => setNeck(v)} />
             <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[35px] top-[70px]">
-            <TextInput keyboardType='numeric' className="bg-slate-100 font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='height' defaultValue={height} onChangeText={(v) => setHeight(v)} />
+            <TextInput keyboardType='numeric'
+            style={{
+              backgroundColor:colors.main.optionBg,
+              borderBottomWidth:(!colors.dark)?1:0,
+              borderBottomColor:colors.button,
+
+            }}
+            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='height' defaultValue={height} onChangeText={(v) => setHeight(v)} />
             <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[6px] top-[250px]">
-            <TextInput keyboardType='numeric' className="bg-slate-100 font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='biceps' defaultValue={biceps} onChangeText={(v) => setBiceps(v)} />
+            <TextInput keyboardType='numeric'
+            style={{
+              backgroundColor:colors.main.optionBg,
+              borderBottomWidth:(!colors.dark)?1:0,
+              borderBottomColor:colors.button,
+
+            }}
+            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='biceps' defaultValue={biceps} onChangeText={(v) => setBiceps(v)} />
             <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[30px] left-[30px] top-[340px]">
-            <TextInput keyboardType='numeric' className="bg-slate-100 font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weist' defaultValue={weist} onChangeText={(v) => setWeist(v)} />
+            <TextInput keyboardType='numeric'
+            style={{
+              backgroundColor:colors.main.optionBg,
+              borderBottomWidth:(!colors.dark)?1:0,
+              borderBottomColor:colors.button,
+
+            }}
+            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weist' defaultValue={weist} onChangeText={(v) => setWeist(v)} />
             <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[30px]">
-            <TextInput keyboardType='numeric' className="bg-slate-100 font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weight' defaultValue={weight} onChangeText={(v) => setWeight(v)} />
+            <TextInput keyboardType='numeric'
+            style={{
+              backgroundColor:colors.main.optionBg,
+              borderBottomWidth:(!colors.dark)?1:0,
+              borderBottomColor:colors.button,
+
+            }}
+            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weight' defaultValue={weight} onChangeText={(v) => setWeight(v)} />
             <Text className="absolute right-[1px] bottom-[1px] text-xs font-thin">kg</Text>
           </View>
 
@@ -211,8 +264,11 @@ const PropHome = () => {
             </Text>
             <DropDown
               selectOnly={true}
-              style={" w-[150px] bg-slate-50"}
+              style={" w-[150px]"}
               data={['neck', 'biceps', 'weist', 'weight']}
+              inputBgColor={colors.main.optionBg}
+              optionBgColor={colors.main.optionBg}
+              textColor={colors.main.text}
               onSelectChange={(v) => setTab(v)}
               defaultText={tab}
             />
@@ -221,10 +277,11 @@ const PropHome = () => {
           <View className="border-t-[1px]"> 
             <Graph graphData={graphData}
               height={500}
-              bgColor={'#2239'}
+              bgColor={colors.main.subBg}
+              
               textColor='#fcfcfc99'
-              dateColor='#3339'
-              valueColor='#333a'
+              dateColor={colors.main.border}
+              valueColor={colors.main.border}
               stickColor='#faa75599'
               dotColor='#333'
               onDelete={(id)=>deleteResults(id)}

@@ -1,18 +1,24 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Slot, Tabs } from 'expo-router'
+import { ThemeContext } from '../_layout'
 
 
 
 const PropLayout = () => {
+
+  const {colors} = useContext(ThemeContext)
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle:{
-          backgroundColor:'#234',
+          backgroundColor:colors.main.navbar,
           borderColor:'#234',
-          height:50
+          height:50,
+          borderTopWidth:0,
+          shadowColor:0
         }
       }}>
       <Tabs.Screen

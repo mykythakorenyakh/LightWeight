@@ -1,12 +1,17 @@
 import { View, Text, Pressable, Image, Alert, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Timer from '../../components/Timer'
 import TimersSet from '../../components/TimersSet';
 
 import { addTimer, getTimers, updateTimer, deleteTimer } from '../../services/database';
 import { Swipeable } from 'react-native-gesture-handler';
+import { ThemeContext } from '../_layout';
+
+  
 
 const FuncHome = () => {
+
+  const {colors} = useContext(ThemeContext)
 
   const [start, setStart] = useState(false);
 
@@ -152,7 +157,7 @@ const FuncHome = () => {
 
 
   return (
-    <View className="flex-1 bg-slate-800">
+    <View className="flex-1 " style={{backgroundColor:colors.main.bg}}>
       
       <View className="flex absolute bottom-10 w-full items-center z-[1]">
         <Pressable

@@ -1,15 +1,18 @@
 import { View, Text, Pressable, TextInput, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { Audio, InterruptionModeIOS } from 'expo-av';
 
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
+import { ThemeContext } from '../app/_layout';
 
 
 
 const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange, onTimeChange, resetOnly }) => {
 
+
+    const {colors} = useContext(ThemeContext)
 
     const [sound, setSound] = useState();
 
@@ -177,13 +180,16 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
     }
 
     return (
-        <View className="bg-slate-600 flex-row justify-between py-3 px-6 items-center">
+        <View className="flex-row justify-between py-3 px-6 items-center"
+        style={{backgroundColor:colors.main.optionBg}}
+        >
             {displayTime()}
 
             <TextInput
-                className="text-slate-800 text-xl w-[45%]"
+                className="text-xl w-[45%]"
                 multiline={false}
                 defaultValue={title}
+                tintColor={colors.main.text}
                 onChangeText={(v) => {
                     setTitle(v);
                     if (onTitleChange) {
@@ -197,7 +203,7 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                     setSeconds(time.seconds)
                 }}>
 
-                    {(time.minutes!=minutes || time.seconds!=seconds)?<Image tintColor={'#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} />:''}
+                    {(time.minutes!=minutes || time.seconds!=seconds)?<Image tintColor={colors.main.button} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} />:''}
 
                 </Pressable>
                 :
@@ -213,8 +219,8 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                     }
                 }}>
                     {pause
-                        ? <Image tintColor={(minutes || seconds) ? '#223' : '#2239'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
-                        : <Image tintColor={'#223'} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
+                        ? <Image tintColor={(minutes || seconds) ? colors.main.button : colors.main.unavailable} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
+                        : <Image tintColor={colors.main.button} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
                 </Pressable>
             }
 

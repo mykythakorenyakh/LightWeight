@@ -1,13 +1,17 @@
-import { View, Text, TextInput, Image, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TextInput, Image, Pressable, Animated } from 'react-native'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Timer from './Timer'
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Audio } from 'expo-av';
+import { ThemeContext } from '../app/_layout';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChange, onTitleChange }) => {
+
+    const { colors } = useContext(ThemeContext);
+
 
     const [timers, setTimers] = useState([]);
     const [title, setTitle] = useState();
@@ -19,6 +23,7 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
 
 
 
+
     useEffect(() => {
         setTimers(data)
         setTitle(timerTitle)
@@ -27,14 +32,14 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
     }, [])
 
 
-    useEffect(()=>{
-        if(!timers){
-            if(data){
+    useEffect(() => {
+        if (!timers) {
+            if (data) {
                 setTimers(data)
             }
         }
 
-    },[timers])
+    }, [timers])
 
 
     const createTimer = () => {
@@ -60,15 +65,25 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
 
     const delAction = (progress, dragX) => {
         const scale = dragX.interpolate({
-            inputRange: [-100, 0],
-            outputRange: [1, 0],
+            inputRange: [0, 50],
+            outputRange: [30, 0],
+            extrapolate: 'clamp',
+        });
+        const angel = dragX.interpolate({
+            inputRange: [0, 50],
+            outputRange: [90, 0],
             extrapolate: 'clamp',
         });
 
-        return (<View
-            className="bg-red-500 h-10 w-10 items-center justify-center self-center rounded-full">
+        return (<Animated.View
+            className="bg-red-500 h-10 w-10 items-center justify-center self-center rounded-full"
+            style={{
+                transform: [{ translateX: scale }],
+
+            }}
+        >
             <Image tintColor={'#223'} className="w-8 h-8" source={require('../assets/icons/trash.png')} />
-        </View>)
+        </Animated.View>)
     }
     const deleteTimer = (timerId) => {
         let newArr = [...timers].filter(item => item.id != timerId)
@@ -157,7 +172,7 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
     }
 
     return (
-        <View className="flex-col p-3 bg-slate-700 justify-between my-[1px]">
+        <View className="flex-col p-3 justify-between my-[1px]" style={{ backgroundColor: colors.main.subBg }}>
             <View className="flex-row py-1 px-3 justify-between items-center">
                 <Pressable
                     onPress={() => { createTimer(); }}
@@ -165,7 +180,7 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                     <Image
                         className="w-4 h-4"
                         resizeMode='contain'
-                        tintColor={'#223'}
+                        tintColor={colors.main.button}
                         source={require('../assets/icons/plus.png')} />
                 </Pressable>
                 <TextInput
@@ -173,6 +188,7 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                     multiline={false}
                     defaultValue={title}
                     value={title}
+                    tintColor={colors.main.text}
                     onChangeText={(v) => {
                         setTitle(v);
                         if (onTitleChange) onTitleChange(v)
@@ -181,7 +197,9 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
 
                 {pause ?
                     <TextInput
-                        className="w-[10%] bg-slate-600 text-center"
+                        className="w-[10%]  text-center"
+                        style={{ backgroundColor: colors.main.subBg}}
+                        tintColor={colors.main.text}
                         inputMode='numeric'
                         defaultValue={repeatAmount}
                         value={repeatAmount}
@@ -205,7 +223,7 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
 
                 }}>
 
-                    {(order!=0 || repeat!=repeatAmount || !pause)?<Image tintColor={starting ? '#2239' : '#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} />:''}
+                    {(order != 0 || repeat != repeatAmount || !pause) ? <Image tintColor={starting ? '#2239' : '#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/reset.png')} /> : ''}
 
                 </Pressable>
 
@@ -235,8 +253,8 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                     }
                 } : null}>
                     {pause
-                        ? <Image tintColor={starting ? '#2239' : '#223'} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
-                        : <Image tintColor={'#223'} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
+                        ? <Image tintColor={!starting ? colors.main.button : colors.main.unavailable} className="w-6 h-8" resizeMode='contain' source={require('../assets/icons/play.png')} />
+                        : <Image tintColor={colors.main.button} className="w-8 h-8" resizeMode='contain' source={require('../assets/icons/pause.png')} />}
                 </Pressable>
             </View>
             {displayTimers()}

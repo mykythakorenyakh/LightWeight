@@ -1,9 +1,10 @@
 import { View, Text, Pressable, Image, Animated } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import { Dimensions } from 'react-native';
 
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
+import { ThemeContext } from '../_layout';
 
 
 let materialList = [
@@ -62,6 +63,7 @@ let soundList = [
 
 const Special = () => {
 
+    const {colors} = useContext(ThemeContext)
 
     const windowWidth = Dimensions.get('window').width - 100;
     const windowHeight = Dimensions.get('window').height - 100;
@@ -176,7 +178,9 @@ const Special = () => {
     return (
         <>
             {!start ?
-                <View className="flex-1 bg-slate-800 justify-center items-center">
+                <View className="flex-1  justify-center items-center"
+                    style={{backgroundColor:colors.main.bg}}
+                >
                     <Pressable onPressIn={() => setButtonPressed(true)} onPressOut={() => { setButtonPressed(false); setStart(true); }}>
                         <Image resizeMode='contain'
                             className="w-[100px]"
@@ -185,7 +189,9 @@ const Special = () => {
                 </View>
                 :
 
-                <Pressable className="flex-1 bg-slate-950 " onLongPress={() => setStart(false)}>
+                <Pressable className="flex-1 "
+                style={{backgroundColor:colors.main.subBg}}
+                onLongPress={() => setStart(false)}>
                     <Animated.Image
                         className="max-w-[400px] max-h-[400px]"
                         resizeMode='contain'

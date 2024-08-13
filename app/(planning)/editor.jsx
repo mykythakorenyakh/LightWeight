@@ -1,14 +1,18 @@
 import { View, Text, Modal, Pressable, TextInput, ScrollView, Image, Animated, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Calendar } from 'react-native-calendars'
 
 import { addWorkout, updateWorkout, getExercises } from '../../services/database.jsx';
 import DropDown from '../../components/DropDown.jsx';
+import { ThemeContext } from '../_layout.jsx';
 
 
 const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
+
+  const { colors } = useContext(ThemeContext)
+
   const [title, setTitle] = useState('')
   const [exercises, setExercises] = useState([])
   const [description, setDescription] = useState('')
@@ -16,7 +20,7 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
   const [showCalendar, setShowCalendar] = useState(false)
   const [day, setDay] = useState(null)
 
-  const [titles,setTitles] = useState();
+  const [titles, setTitles] = useState();
 
   useEffect(() => {
     if (workout) {
@@ -127,17 +131,27 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                   >
                     <View                                                                                                               //TITLE
 
-                      className="flex flex-row py-1 bg-slate-400  border-l-[6px] border-l-slate-200 mb-1 items-start px-1">
+                      className="flex flex-row py-1  border-l-[6px] mb-1 items-start px-1"
+                      style={{
+                        backgroundColor: colors.main.subBg,
+                        borderLeftColor: colors.main.border
+                      }}
+                    >
                       <View className="basis-[40%]">
-                        <Text className="text-xs font-light">Exercise</Text>
+                        <Text className="text-xs font-light"
+                          style={{
+                            color: colors.main.subText,
+                          }}
+                        >Exercise</Text>
                         <DropDown
                           data={titles}
                           defaultText={item.title}
                           onTextChange={(v) => changeExercise({ id: item.id, title: v })}
                           onSelectChange={(v) => changeExercise({ id: item.id, title: v })}
                           isReletive={true}
-                          style="bg-slate-200 z-[998]"
-                          barStyle="bg-slate-200 flex-1 pl-1 pr-5"
+                          inputBgColor={colors.main.optionBg}
+                          optionBgColor={colors.main.optionBg}
+                          textColor={colors.main.text}
                         />
 
                       </View>
@@ -148,6 +162,10 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                           <View className="basis-[14%]">
                             <Pressable onPress={() => changeExercise({ id: item.id, odd: true })}><Text className="text-xs font-light" >Sets</Text></Pressable>
                             <TextInput keyboardType="numeric" className="bg-slate-300"
+                              style={{
+                                backgroundColor: colors.main.optionBg,
+                                color: colors.main.subText,
+                              }}
                               defaultValue={item.cycle[0].sets}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -171,7 +189,11 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                             }}>
                               <Text className="text-xs font-light">Reps</Text>
                             </Pressable>
-                            <TextInput keyboardType="numeric" className="bg-slate-300"
+                            <TextInput keyboardType="numeric"
+                              style={{
+                                backgroundColor: colors.main.optionBg,
+                                color: colors.main.subText,
+                              }}
                               defaultValue={item.cycle[0].reps}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -189,7 +211,11 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
 
                           <View className="basis-[14%]">
                             <Text className="text-xs font-light">Weight</Text>
-                            <TextInput keyboardType="numeric" className="bg-slate-300"
+                            <TextInput keyboardType="numeric"
+                              style={{
+                                backgroundColor: colors.main.optionBg,
+                                color: colors.main.subText,
+                              }}
                               defaultValue={item.cycle[0].weight}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -207,7 +233,11 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
 
                           <View className="basis-[14%]">
                             <Text className="text-xs font-light">RiR</Text>
-                            <TextInput keyboardType="numeric" className="bg-slate-300"
+                            <TextInput keyboardType="numeric"
+                              style={{
+                                backgroundColor: colors.main.optionBg,
+                                color: colors.main.subText,
+                              }}
                               defaultValue={item.cycle[0].rir}
                               onChangeText={(v) => changeExercise({
                                 id: item.id,
@@ -252,7 +282,10 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                               </View>
 
                               <View className="basis-[27%]">
-                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.reps}
+                                <TextInput keyboardType="numeric" style={{
+                                  backgroundColor: colors.main.optionBg,
+                                  color: colors.main.subText,
+                                }} defaultValue={c.reps}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -267,7 +300,10 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                               </View>
 
                               <View className="basis-[27%]">
-                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.weight}
+                                <TextInput keyboardType="numeric" style={{
+                                  backgroundColor: colors.main.optionBg,
+                                  color: colors.main.subText,
+                                }} defaultValue={c.weight}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -282,7 +318,10 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
                               </View>
 
                               <View className="basis-[14%]">
-                                <TextInput keyboardType="numeric" className="bg-slate-300" defaultValue={c.rir}
+                                <TextInput keyboardType="numeric" style={{
+                                  backgroundColor: colors.main.optionBg,
+                                  color: colors.main.subText,
+                                }} defaultValue={c.rir}
                                   onChangeText={(v) => {
                                     changeExercise({
                                       id: item.id,
@@ -410,8 +449,11 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
       visible={show}
     >
 
-      <View className="flex-1 bg-slate-500 gap-3">
-        <View className="bg-slate-600 h-12 flex-row items-center justify-between">
+      <View className="flex-1 gap-3"
+        style={{ backgroundColor: colors.main.bg }}>
+        <View className="h-12 flex-row items-center justify-between"
+          style={{ backgroundColor: colors.main.navbar }}
+        >
           <Pressable onPress={() => {
             if (checkChanges()) {
               Alert.alert('Warning', 'Do you want to save changes', [{
@@ -432,11 +474,11 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
             }
 
           }}>
-            <Image className="w-6 ml-3" tintColor={'#223'} resizeMode='contain' source={require('../../assets/icons/arrow.png')} />
+            <Image className="w-6 ml-3" tintColor={colors.main.button} resizeMode='contain' source={require('../../assets/icons/arrow.png')} />
           </Pressable>
           <Pressable className="flex-row items-center gap-x-3" onPress={() => { setShowCalendar(prev => !prev) }}>
-            {(day) ? <Pressable onPress={() => { setDay(null); setShowCalendar(false) }}><Text className="text-slate-800 font-bold">Clear Date</Text></Pressable> : ''}
-            <Image className="w-6 mr-3" tintColor={'#223'} resizeMode='contain' source={require('../../assets/icons/calendar.png')} />
+            {(day) ? <Pressable onPress={() => { setDay(null); setShowCalendar(false) }}><Text className="font-bold" style={{ color: colors.main.button }}>Clear Date</Text></Pressable> : ''}
+            <Image className="w-6 mr-3" tintColor={colors.main.button} resizeMode='contain' source={require('../../assets/icons/calendar.png')} />
           </Pressable>
         </View>
 
@@ -445,12 +487,12 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
             className="my-1"
             enableSwipeMonths={true}
             markingType="dot"
-            markedDates={{ [day]: { selected: true, color: '#238' } }}
+            markedDates={{ [day]: { selected: true, color: '#10f' } }}
             theme={{
-              calendarBackground: '#475569',
-              dayTextColor: '#999',
+              calendarBackground: colors.main.subBg,
+              dayTextColor: colors.main.subText,
               textDisabledColor: '#8887',
-            }} style={{ backgroundColor: '#475569' }}
+            }} style={{ backgroundColor: colors.main.subBg }}
             onDayPress={(d) => {
 
               setDay(`${d.year}-${d.month <= 9 ? '0' + d.month : d.month}-${d.day}`)
@@ -460,27 +502,46 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
           : ''}
 
         <View className="p-3">
-          <TextInput className="text-lg" placeholder='Enter Title' defaultValue={title} onChangeText={(v) => setTitle(v)} />
+          <TextInput style={{
+            color: colors.main.text,
+          }} className="text-lg px-3" multiline={true} placeholder='Enter Title' defaultValue={title} onChangeText={(v) => setTitle(v)} />
 
           <Pressable className="self-end mt-3" onPress={() => addNewExercise()}>
-            <Text className="text-sm font-light text-gray-800 p-1">Add New Exercise</Text>
+            <Text className="text-sm font-bold p-1"
+              style={{
+                color: colors.main.button
+              }}
+            >+ Add New Exercise</Text>
           </Pressable>
           <View className="max-h-[50%]">
             {dipslayExercises()}
           </View>
 
-          <Text className="text-sm font-light text-gray-800">Description</Text>
+          <Text className="text-sm opacity-75"
+            style={{
+              color: colors.main.text
+            }}
+          >Description</Text>
           <TextInput
-            className="bg-slate-300 text-slate-800"
+            className="p-1"
             multiline={true}
             numberOfLines={8}
-            style={{ textAlignVertical: 'top', }}
+            style={{
+              textAlignVertical: 'top',
+              backgroundColor: colors.main.subBg,
+              color: colors.main.text
+            }}
             defaultValue={description}
             onChangeText={(v) => setDescription(v)}
           />
           <Pressable
             onPress={() => save()}
-            className="flex items-center p-3 bg-slate-600 mt-3">
+            className="flex items-center p-3 mt-3"
+            style={{
+              backgroundColor: colors.main.buttonBg,
+
+            }}
+          >
             <Text className="text-green-100 text-xl font-extrabold">Save</Text>
           </Pressable>
 
