@@ -1,23 +1,23 @@
 {
   "expo": {
-    "name": "popeye",
-    "scheme": "popeye",
-    "slug": "popeye",
+    "name": "Light Weight",
+    "scheme": "lightweight",
+    "slug": "lightweight",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/loading.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#41455d"
     },
     "ios": {
       "supportsTablet": true,
       "userInterfaceStyle": "automatic"
     },
     "android": {
-       "userInterfaceStyle": "automatic",
+      "userInterfaceStyle": "automatic",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

@@ -188,7 +188,10 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                     multiline={false}
                     defaultValue={title}
                     value={title}
-                    tintColor={colors.main.text}
+                    style={{
+                        color:colors.main.text,
+                        borderBottomColor:colors.main.border,
+                    }}
                     onChangeText={(v) => {
                         setTitle(v);
                         if (onTitleChange) onTitleChange(v)
@@ -198,8 +201,10 @@ const TimersSet = ({ data, timerTitle, repeatAmount, onDataChange, onRepeatChang
                 {pause ?
                     <TextInput
                         className="w-[10%]  text-center"
-                        style={{ backgroundColor: colors.main.subBg}}
-                        tintColor={colors.main.text}
+                        style={{ 
+                            backgroundColor: colors.main.subBg,
+                            color:colors.main.text,
+                        }}
                         inputMode='numeric'
                         defaultValue={repeatAmount}
                         value={repeatAmount}

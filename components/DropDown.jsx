@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from 'react-native'
+import { View, Text, Pressable, ScrollView, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { FlatList, TextInput } from 'react-native-gesture-handler'
 
@@ -41,7 +41,7 @@ const DropDown = ({ inputBgColor, optionBgColor, textColor, style, barStyle, isR
                     }}
                     readOnly={selectOnly}
                 />
-                <Pressable className="px-1" onPress={() => setShowList(prev => !prev)}><Text className="text-slate-700">{showList ? "▼" : "◀"}</Text></Pressable>
+                <Pressable className="px-1" onPress={() => setShowList(prev => !prev)}>{showList ? <Image resizeMode='contain' style={{height:12, width:12}} source={require('../assets/icons/arrowdown.png')}/> : <Image resizeMode='contain' style={{height:12, width:12}} source={require('../assets/icons/arrowleft.png')}/>}</Pressable>
             </View>
             {showList ?
                 <View

@@ -133,6 +133,10 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                     className=" font-light text-xl border-b-[1px] w-[30px] text-center"
                     defaultValue={String(minutes)}
                     value={String(minutes)}
+                    style={{
+                        color:colors.main.text,
+                        borderBottomColor:colors.main.border,
+                    }}
                     onChangeText={(v) => {
                         if (Number(v) < 60) {
                             setMinutes(v)
@@ -151,6 +155,10 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                     className="font-light text-xl border-b-[1px] w-[30px] text-center"
                     defaultValue={String(seconds)}
                     value={String(seconds)}
+                    style={{
+                        color:colors.main.text,
+                        borderBottomColor:colors.main.border,
+                    }}
                     onChangeText={(v) => {
                         if (Number(v) < 60) {
                             setSeconds(v)
@@ -189,7 +197,9 @@ const Timer = ({ timerTitle, time, onFinish, onPause, startTimer, onTitleChange,
                 className="text-xl w-[45%]"
                 multiline={false}
                 defaultValue={title}
-                tintColor={colors.main.text}
+                style={{
+                    color:colors.main.text
+                }}
                 onChangeText={(v) => {
                     setTitle(v);
                     if (onTitleChange) {

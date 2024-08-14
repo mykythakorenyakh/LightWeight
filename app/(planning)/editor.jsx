@@ -1,4 +1,4 @@
-import { View, Text, Modal, Pressable, TextInput, ScrollView, Image, Animated, Alert } from 'react-native';
+import { View, Text, Modal, Pressable, TextInput, ScrollView, Image, Animated, Alert, TouchableWithoutFeedback } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -21,6 +21,8 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
   const [day, setDay] = useState(null)
 
   const [titles, setTitles] = useState();
+
+  const [descFocus, setDescFocus] = useState(false)
 
   useEffect(() => {
     if (workout) {
@@ -522,18 +524,36 @@ const WorkoutEditor = ({ show, setShow, workout, setWorkout }) => {
               color: colors.main.text
             }}
           >Description</Text>
+
           <TextInput
-            className="p-1"
-            multiline={true}
-            numberOfLines={8}
+            className="p-1 h-[100px]"
+            multiline={false}
+
+            onFocus={() => {
+              
+              setDescFocus(true);
+            }}
+            onBlur={() => {
+              
+              setDescFocus(false);
+            }}
+
             style={{
               textAlignVertical: 'top',
               backgroundColor: colors.main.subBg,
-              color: colors.main.text
+              color: colors.main.text,
+
+              position:(descFocus)?'absolute':'relative',
+              top:(descFocus)?10:0,
+              left:(descFocus)?12:0,
+              width:(descFocus)?'100%':'100%',
+              borderWidth:(descFocus)?3:0,
+              borderColor:colors.main.border,
             }}
             defaultValue={description}
             onChangeText={(v) => setDescription(v)}
           />
+
           <Pressable
             onPress={() => save()}
             className="flex items-center p-3 mt-3"

@@ -63,7 +63,7 @@ let soundList = [
 
 const Special = () => {
 
-    const {colors} = useContext(ThemeContext)
+    const {colors,volume} = useContext(ThemeContext)
 
     const windowWidth = Dimensions.get('window').width - 100;
     const windowHeight = Dimensions.get('window').height - 100;
@@ -82,6 +82,8 @@ const Special = () => {
     const [soundEffect, setSoundEffect] = useState();
     const [soundIndex, setSoundIndex] = useState(0)
 
+
+
     const shuffle = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -96,13 +98,21 @@ const Special = () => {
             interruptionModeIOS:InterruptionModeIOS.MixWithOthers,
         })
         const { sound } = await Audio.Sound.createAsync(src);
+        
         await sound.setIsMutedAsync(false)
 
-        await sound.setVolumeAsync(Math.random())
+        const vol = Math.random()*volume;
+
+        console.log(vol)
+        await sound.setVolumeAsync(vol)
         await sound.setPositionAsync(0);
         setSoundEffect(sound);
         await sound.playAsync();
+        setTimeout(async ()=>{
+            await sound.unloadAsync();
+        },5000)
     }
+
 
 
     useEffect(() => {

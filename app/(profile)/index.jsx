@@ -10,7 +10,7 @@ import { ThemeContext } from '../_layout.jsx'
 
 const PropHome = () => {
 
-  const {colors} = useContext(ThemeContext)
+  const { colors } = useContext(ThemeContext)
 
   const [params, setParams] = useState([])
 
@@ -25,7 +25,7 @@ const PropHome = () => {
   const [tab, setTab] = useState('weight');
   const [graphData, setGraphData] = useState();
 
-  const [poseur,setPouser] = useState(require('../../assets/bg/profilelight.png'))
+  const [poseur, setPouser] = useState(require('../../assets/bg/profilelight.png'))
 
   const update = () => {
     const result = getProfile().getAllSync().reverse();
@@ -110,13 +110,13 @@ const PropHome = () => {
 
   }
 
-  useEffect(()=>{
-    if(colors.dark){
+  useEffect(() => {
+    if (colors.dark) {
       setPouser(require('../../assets/bg/profile.png'));
-    }else{
+    } else {
       setPouser(require('../../assets/bg/profilelight.png'));
     }
-  },[colors])
+  }, [colors])
 
 
   useEffect(() => {
@@ -170,7 +170,7 @@ const PropHome = () => {
   return (
     <View className="flex-1 flex-col"
       style={{
-        backgroundColor:colors.main.bg
+        backgroundColor: colors.main.bg
       }}
     >
 
@@ -196,62 +196,83 @@ const PropHome = () => {
 
           <View className="absolute bottom-[100px] left-[20px] top-[145px]">
             <TextInput keyboardType='numeric'
-            style={{
-              backgroundColor:colors.main.optionBg,
-              borderBottomWidth:(!colors.dark)?1:0,
-              borderBottomColor:colors.button,
-              
-            }}
-            className=" font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='neck' defaultValue={neck} onChangeText={(v) => setNeck(v)} />
-            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
+              style={{
+                backgroundColor: colors.main.optionBg,
+                borderBottomWidth: (!colors.dark) ? 1 : 0,
+                borderBottomColor: colors.main.button,
+                color: colors.main.text,
+
+              }}
+              className=" font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='neck' defaultValue={neck} onChangeText={(v) => setNeck(v)} />
+            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin"
+              style={{
+                color: colors.main.text,
+              }}
+            >cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[35px] top-[70px]">
             <TextInput keyboardType='numeric'
-            style={{
-              backgroundColor:colors.main.optionBg,
-              borderBottomWidth:(!colors.dark)?1:0,
-              borderBottomColor:colors.button,
+              style={{
+                backgroundColor: colors.main.optionBg,
+                borderBottomWidth: (!colors.dark) ? 1 : 0,
+                borderBottomColor: colors.main.button,
+                color: colors.main.text,
 
-            }}
-            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='height' defaultValue={height} onChangeText={(v) => setHeight(v)} />
-            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
+              }}
+              className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='height' defaultValue={height} onChangeText={(v) => setHeight(v)} />
+            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin"
+              style={{
+                color: colors.main.text,
+              }}>cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[6px] top-[250px]">
             <TextInput keyboardType='numeric'
-            style={{
-              backgroundColor:colors.main.optionBg,
-              borderBottomWidth:(!colors.dark)?1:0,
-              borderBottomColor:colors.button,
+              style={{
+                backgroundColor: colors.main.optionBg,
+                borderBottomWidth: (!colors.dark) ? 1 : 0,
+                borderBottomColor: colors.main.button,
+                color: colors.main.text,
 
-            }}
-            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='biceps' defaultValue={biceps} onChangeText={(v) => setBiceps(v)} />
-            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
+              }}
+              className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='biceps' defaultValue={biceps} onChangeText={(v) => setBiceps(v)} />
+            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin"
+              style={{
+                color: colors.main.text,
+              }}>cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[30px] left-[30px] top-[340px]">
             <TextInput keyboardType='numeric'
-            style={{
-              backgroundColor:colors.main.optionBg,
-              borderBottomWidth:(!colors.dark)?1:0,
-              borderBottomColor:colors.button,
+              style={{
+                backgroundColor: colors.main.optionBg,
+                borderBottomWidth: (!colors.dark) ? 1 : 0,
+                borderBottomColor: colors.main.button,
+                color: colors.main.text,
 
-            }}
-            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weist' defaultValue={weist} onChangeText={(v) => setWeist(v)} />
-            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin">cm</Text>
+              }}
+              className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weist' defaultValue={weist} onChangeText={(v) => setWeist(v)} />
+            <Text className="reletive left-[55px] top-[-15px] text-xs font-thin"
+              style={{
+                color: colors.main.text,
+              }}>cm</Text>
           </View>
 
           <View className="absolute bottom-[100px] right-[30px]">
             <TextInput keyboardType='numeric'
-            style={{
-              backgroundColor:colors.main.optionBg,
-              borderBottomWidth:(!colors.dark)?1:0,
-              borderBottomColor:colors.button,
+              style={{
+                backgroundColor: colors.main.optionBg,
+                borderBottomWidth: (!colors.dark) ? 1 : 0,
+                borderBottomColor: colors.main.button,
+                color: colors.main.text,
 
-            }}
-            className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weight' defaultValue={weight} onChangeText={(v) => setWeight(v)} />
-            <Text className="absolute right-[1px] bottom-[1px] text-xs font-thin">kg</Text>
+              }}
+              className="font-light w-[75px] px-1" placeholderTextColor={'#2239'} placeholder='weight' defaultValue={weight} onChangeText={(v) => setWeight(v)} />
+            <Text className="absolute right-[1px] bottom-[1px] text-xs font-thin"
+              style={{
+                color: colors.main.text,
+              }}>kg</Text>
           </View>
 
         </View>
@@ -274,17 +295,17 @@ const PropHome = () => {
             />
           </View>
 
-          <View className="border-t-[1px]"> 
+          <View className="border-t-[1px]">
             <Graph graphData={graphData}
               height={500}
               bgColor={colors.main.subBg}
-              
+
               textColor='#fcfcfc99'
               dateColor={colors.main.border}
               valueColor={colors.main.border}
               stickColor='#faa75599'
               dotColor='#333'
-              onDelete={(id)=>deleteResults(id)}
+              onDelete={(id) => deleteResults(id)}
             />
           </View>
         </View>

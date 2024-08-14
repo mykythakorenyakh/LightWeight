@@ -18,21 +18,32 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(colorScheme || 'dark');
   const [colors, setColors] = useState(dark);
 
+  const [volume, setVolume] = useState(1)
+
   useEffect(() => {
     // Load saved theme from storage
     const getTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
+
+        const savedVolume = await AsyncStorage.getItem('volume');
         if (savedTheme) {
           setTheme(savedTheme);
           if (savedTheme == 'auto') {
-            setColors((colorScheme=='dark')?dark:light)
-          }else if(savedTheme == 'light'){
+            setColors((colorScheme == 'dark') ? dark : light)
+          } else if (savedTheme == 'light') {
             setColors(light)
-          }else{
+          } else {
             setColors(dark)
           }
         }
+
+        if (savedVolume) {
+          setVolume(Number(savedVolume))
+        }else{
+          AsyncStorage.setItem('volume', String(1))
+        }
+
       } catch (error) {
         console.log('Error loading theme:', error);
       }
@@ -41,21 +52,20 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-   
 
-    if (colorScheme && theme=='auto') {
-      setColors(colorScheme==='light'?light:dark)
+
+    if (colorScheme && theme == 'auto') {
+      setColors(colorScheme === 'light' ? light : dark)
     }
   }, [colorScheme]);
 
   const toggleTheme = newTheme => {
-    console.log("System: "+newTheme)
     setTheme(newTheme);
     if (newTheme == 'dark') {
       setColors(dark)
     }
-    else if(newTheme=='auto') {
-      setColors(colorScheme=='dark'?dark:light)
+    else if (newTheme == 'auto') {
+      setColors(colorScheme == 'dark' ? dark : light)
     }
     else {
       setColors(light)
@@ -63,8 +73,13 @@ export const ThemeProvider = ({ children }) => {
     AsyncStorage.setItem('theme', newTheme)
   };
 
+  const toggleVolume = newVolume => {
+    setVolume(Number(newVolume))
+    AsyncStorage.setItem('volume', String(newVolume))
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, colors }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, colors, volume, toggleVolume }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -87,7 +102,7 @@ const MainLayout = () => {
   return (
     <ThemeProvider>
       <ThemeContext.Consumer>
-        {({theme, toggleTheme,colors}) => (
+        {({ theme, toggleTheme, colors }) => (
           <Drawer
             drawerContent={(props) => <ImageBackground className="flex-1 pt-[50]" source={require('../assets/bg/drawer.png')}>
               <DrawerContentScrollView {...props}>
@@ -97,7 +112,7 @@ const MainLayout = () => {
             </ImageBackground>}
             screenOptions={
               {
-                headerBackground: () => <View className="flex-1 " style={{backgroundColor:colors.main.navbar}}></View>,
+                headerBackground: () => <View className="flex-1 " style={{ backgroundColor: colors.main.navbar }}></View>,
                 headerTitleStyle: {
                   color: colors.main.navText
                 },
