@@ -19,9 +19,10 @@
     "android": {
       "userInterfaceStyle": "automatic",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/loading.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lightweight.baby"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +30,21 @@
     "plugins": [
       "expo-router",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "80ef6e55-20bb-47c7-83f3-9f0fabba574d"
+      }
+    },
+    "owner": "mykythakorenykh",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/80ef6e55-20bb-47c7-83f3-9f0fabba574d"
+    }
   }
 }

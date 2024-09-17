@@ -104,12 +104,12 @@ const MainLayout = () => {
       <ThemeContext.Consumer>
         {({ theme, toggleTheme, colors }) => (
           <Drawer
-            drawerContent={(props) => <ImageBackground className="flex-1 pt-[50]" source={require('../assets/bg/drawer.png')}>
+            drawerContent={(props) => <View className="flex-1 pt-[50]" style={{ backgroundColor: colors.main.bg }} >
               <DrawerContentScrollView {...props}>
                 <DrawerItemList {...props} />
               </DrawerContentScrollView>
 
-            </ImageBackground>}
+            </View>}
             screenOptions={
               {
                 headerBackground: () => <View className="flex-1 " style={{ backgroundColor: colors.main.navbar }}></View>,
@@ -151,8 +151,8 @@ const MainLayout = () => {
             <Drawer.Screen
               name="(functions)" // This is the name of the page and must match the url from root
               options={{
-                drawerLabel: 'Functions',
-                title: 'Functions',
+                drawerLabel: 'Timers',
+                title: 'Timers',
                 drawerIcon: ({ color, size, focused }) => <DrawerIcon color={color} icon={require('../assets/icons/func.png')} />,
               }}
             />
